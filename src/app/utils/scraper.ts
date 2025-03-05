@@ -27,7 +27,7 @@ export async function scrapeUrl(url: string){
     try {
         // Check cache first
         logger.info(`Starting scrape process for: ${url}`);
-
+        
         const cached = await getCachedContent(url);
 
         if (cached) {
