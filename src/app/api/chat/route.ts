@@ -10,9 +10,10 @@ import { scrapeUrl, urlPattern } from "@/app/utils/scraper";
 
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json()
+    const { message, messages } = await req.json()
 
     console.log("message received:", message);
+    console.log("messages", messages);
 
     const url = message.match(urlPattern);
 
@@ -29,8 +30,8 @@ export async function POST(req: Request) {
     // Extract the user's query by removing the URL if present
     const userQuery = message.replace(url ? url[0] : '', '').trim();
 
-    const prompt = `
-    Answer my question: "$(userQuery)"
+    const userPrompt = `
+    Answer my question: "${userQuery}"
     
     Based on the following content:
     <content>
@@ -38,14 +39,24 @@ export async function POST(req: Request) {
     </content>
     `
 
-    console.log("PROMPT:", prompt);
+    const llmMessages = [
+      ...messages,
+      {
+        role: "user",
+        content: userPrompt,
+      }
+    ];
 
-    const response = await getGroqResponse(message);
+    console.log("route.ts", llmMessages);
+
+    const response = await getGroqResponse(llmMessages);
+
+    console.log("In route.ts post response");
 
     return NextResponse.json({ message: response })
 
   } catch (error) {
-
+    console.log(error);
     return NextResponse.json({ message: "Error" })
 
   }
