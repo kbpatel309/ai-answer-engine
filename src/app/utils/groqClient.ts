@@ -26,7 +26,7 @@ export async function getGroqResponse(chatMessages: ChatMessage[]) {
     messages,
   });
   //console.log("Received groq api request", response);
-  //check comments
+  // check comments
 
   return response.choices[0].message.content;
 }
